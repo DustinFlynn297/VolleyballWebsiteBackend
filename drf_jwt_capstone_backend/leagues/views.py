@@ -1,3 +1,4 @@
+from django.http.response import Http404, JsonResponse
 from rest_framework import status
 from rest_framework.serializers import Serializer
 from rest_framework.views import APIView
@@ -21,7 +22,7 @@ def get_all_leagues(request):
 
 @api_view(['POST', 'GET'])
 @permission_classes([IsAuthenticated])
-def post_leagues(request):
+def user_leagues(request):
     if request.method == 'POST':
         serializer = LeagueSerializer(data=request.data)
         if serializer.is_valid():
@@ -32,3 +33,28 @@ def post_leagues(request):
         leagues = League.objects.filter(user_id=request.user.id)
         serializer = LeagueSerializer(leagues, many=True)
         return Response(serializer.data)
+
+
+@api_view(['GET', 'PUT', 'DELETE'])
+@permission_classes([AllowAny])
+def get_league(request, pk):
+    try:
+        return League.objects.get(pk=pk)
+    except:
+        raise Http404
+def league_detail(self, request, pk):
+    if request.method == 'GET':
+        league = self.get_league(pk)
+        serializer = LeagueSerializer(league)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    elif request.method == 'PUT':
+        league = self.get_league(pk)
+        serializer = LeagueSerializer(league, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    elif request.method == 'DELETE':
+        league = get_league(pk)
+        league.delete()
+        return Response(status=status.HTTP_200_OK)
