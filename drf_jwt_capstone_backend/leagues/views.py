@@ -17,13 +17,15 @@ User = get_user_model()
 
 # Create your views here.
 
-# @api_view(['GET'])
-# @permission_classes([IsAuthenticated])
-# def get_all_leagues(request):
-#     leagues = League.objects.all()
-#     serializer = LeagueSerializer(leagues, many=True)
-#     return Response(serializer.data)
+# Get all leagues in table
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_all_leagues(request):
+    leagues = League.objects.all()
+    serializer = LeagueSerializer(leagues, many=True)
+    return Response(serializer.data)
 
+# To create a league linked with a specific user id and to retrieve a set of leagues based on user ID.
 @api_view(['POST', 'GET'])
 @permission_classes([IsAuthenticated])
 def user_leagues(request):
@@ -39,6 +41,7 @@ def user_leagues(request):
         return Response(serializer.data)
 
 
+# Get one specific leagues details
 @api_view(['GET'])   
 @permission_classes([IsAuthenticated])
 def league_detail(request, pk):
@@ -47,6 +50,7 @@ def league_detail(request, pk):
         serializer = LeagueSerializer(league)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+#update an existing leagues details
 @api_view(['PUT'])   
 @permission_classes([IsAuthenticated])
 def update_league_detail(request, pk):        
@@ -63,6 +67,7 @@ def update_league_detail(request, pk):
         league.save()
         return Response(status=status.HTTP_202_ACCEPTED)
 
+# delete an existing league
 @api_view(["DELETE"])
 @permission_classes([IsAuthenticated])
 def delete_league(request, pk):
