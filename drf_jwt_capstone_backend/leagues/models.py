@@ -14,3 +14,14 @@ class League(models.Model) :
     cost = models.FloatField()
     division = models.CharField(max_length=300, null=True)
     league_length = models.CharField(max_length=300, null=True)
+
+    def update(self, instance, validated_data):
+        instance.name = validated_data.get('name', instance.name)
+        instance.address = validated_data.get('address', instance.address)
+        instance.city = validated_data.get('city', instance.city)
+        instance.state = validated_data.get('state', instance.state)
+        instance.zipcode = validated_data.get('zipcode', instance.zipcode)
+        instance.cost = validated_data.get('cost', instance.cost)
+        instance.division = validated_data.get('division', instance.division)
+        instance.league_length = validated_data.get('league_length', instance.league_length)
+        return instance
